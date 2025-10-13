@@ -1,100 +1,164 @@
-//Anson Chen
-//CSE 123
-// C1: Abstract Strategy Games
-import java.util.Scanner;
+import java.util.*;
 
 public class Chomp extends AbstractStrategyGame {
+    private int[][] chompBar;
+    private final int totalCols; 
+    private final int totalRows;
+
     public static final int PLAYER_1 = 1;
     public static final int PLAYER_2 = 2;
-    public static final int TIE = 0;
-    public static final int GAME_IS_OVER = -1;
-    public static final int GAME_NOT_OVER = -1;
-
-    private char[][] board;
     private boolean isXTurn;
-    private int cols;
-    private int rows;
+
     private int winner;
 
-
+    /**
+     * Behavior: 
+     * Exceptions: N/A
+     * Returns: N/A (constructor)
+     * Parameters: N/A
+     */
     public Chomp() {
-        this.cols = 4;
-        this.rows = 8; 
-        this.winner = 0; 
+        this.totalRows = 7;
+        this.totalCols = 4;
 
-        this.board = new char[cols][rows];
-        for (int i = 0; i < cols; i++) {
-            for (int j = 0; j < rows; j++) {
-                if (i == 0 && j == 0) {
-                    this.board[i][j] = 'X';
-                }
-                if (i == 0) {
-                    if (j == 0) {
-                        
-                    } else {
-                        this.board[i][j] = j;
-                    }
-                } else if (j == 0) {
-                    this.board[i][j] = i;
-                } else {
-                    this.board[i][j] = 3;
-                }
+        this.chompBar = new int[this.totalCols][this.totalRows];
+        for (int i = 0; i < this.totalCols; i++) {
+            for (int j = 0; j < this.totalRows; j++) {
+                chompBar[i][j] = 3;
             }
         }
+
+        this.winner = -1;
         this.isXTurn = true;
     }
 
+    /**
+     * Behavior:
+     * Exceptions:
+     * Returns:
+     * Parameters:
+     */
     public String instructions() {
-        return "";
+        String insturction = "";
+        return insturction;
     }
 
+    /**
+     * Behavior: 
+     * Exceptions:
+     * Returns: 
+     * Parameters:
+     */
     public String toString() {
-        String gameBoard = "";
-        for (int i )
-        for (int i = 0; i < cols; i++) {
-            gameBoard += "|"
-            for (int j = 0; j < rows; j++)
+        //add the initial row labels for the chomp bar coordinate plane
+        String currentChompBar = "| X |";
+        for (int i = 0; i < totalRows; i++) {
+            currentChompBar += " " + i + " |";
         }
-        return gameBoard;
+        currentChompBar += "\n";
+
+        currentChompBar += "-----";
+        for (int i = 0; i < totalRows; i++) {
+            currentChompBar += "----";
+        }
+        currentChompBar += "\n";
+
+        //add the column labels as well as 
+        for (int i = 0; i < totalCols; i++) {
+            for (int j = 0; j < totalRows; j++) {
+                if (j == 0) {
+                    currentChompBar += "| " + i + " |";
+                }
+                currentChompBar += " " + chompBar[i][j] + " |";
+            }
+            currentChompBar += "\n";
+        }
+        return currentChompBar;
     }
 
+    /**
+     * Behavior:
+     * Exceptions:
+     * Returns:
+     * Parameters:
+     */
     public int getWinner() {
         return winner;
     }
 
+    /**
+     * Behavior:
+     * Exceptions:
+     * Returns:
+     * Parameters:
+     */
     public int getNextPlayer() {
-        return 1;
+        if (isGameOver()) {
+            return -1;
+        }
+        
+        if(isXTurn) {
+            return PLAYER_1;
+        } else {
+            return PLAYER_2;
+        }
     }
 
+    /**
+     * Behavior:
+     * Exceptions:
+     * Returns:
+     * Parameters:
+     */
     public String getMove(Scanner input) {
         if (input == null) {
             throw new IllegalArgumentException("Scanner cannot be null.");
         }
         
+        System.out.print("Chomp Coordinate? ");
+
         // Read the two integers for column and row
         int col = input.nextInt();
         int row = input.nextInt();
         
-        // Format them into a "col,row" string
+        // Format them into a "<row> <col>" string
         return col + " " + row;
     }
 
-    public void makeMove(String coordinates) {
-        String[] colAndRow = coordinates.split(" ");
-        if (colAndRow.length != 2) {
-            throw new IllegalArgumentException("Invalid coordinates format. Expected 'col row'.");
+    /**
+     * Behavior:
+     * Exceptions:
+     * Returns:
+     * Parameters:
+     */
+    public void makeMove(String input) {
+        String[] coordinates = input.split(" ");
+        if (coordinates.length != 2) {
+            throw new IllegalArgumentException("Invalid coordinates format. Expected 'col row'");
         }
 
-        int col = Integer.parseInt(colAndRow[0]);
-        int row = Integer.parseInt(colAndRow[1]);
-        if (col < 1 || row < 1 || col >= this.cols || row >= this.rows) {
-            throw new IllegalArgumentException("Col and Row inputs must be within board bounds.");
+        int row = Integer.parseInt(coordinates[0]);
+        int col = Integer.parseInt(coordinates[1]);
+        if (col < 0 || row < 0 || col >= totalCols || row >= totalRows) {
+            throw new IllegalArgumentException("Col and Row inputs must be within board bounds");
         }
-        
-        if (col == 1 && row == 1) {
-
+        if (chompBar[row][col] == 0) {
+            throw new IllegalArgumentException("That position is already empty, choose another");
         }
 
+        for (int i = col; i < totalCols; i++) {
+            for (int j = row; j < totalRows; j++) { 
+                if (chompBar[i][j] > 0) {
+                    chompBar[i][j]--;
+                }
+            }
+        }
 
+        isXTurn = !isXTurn;
+
+        if (chompBar[0][0] == 0) {
+            winner = getNextPlayer();
+        }
     }
+
 }
