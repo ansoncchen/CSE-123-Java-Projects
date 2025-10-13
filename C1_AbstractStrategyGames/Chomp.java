@@ -24,12 +24,13 @@ public class Chomp extends AbstractStrategyGame {
     /**
      * Behavior: 
      * - Constructs a new Chomp game, initializing a 4x7 board with 3 layers on each square.
-     * - Sets the winner status to NO_WINNER and sets the starting turn to Player 1 (X).
+     * - Sets the winner status to NO_WINNER and sets the starting turn to Player 1.
      * Exceptions: N/A
      * Returns: N/A (constructor)
      * Parameters: N/A
      */
     public Chomp() {
+        //creates initial chomp bar/game board
         this.chompBar = new int[ROWS][COLS];
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
@@ -66,11 +67,11 @@ public class Chomp extends AbstractStrategyGame {
      /**
      * Behavior: 
      * - Generates a string representation of the current state of the Chomp game board, 
-     * including row and column labels for coordinates.
+     *   including row and column labels for coordinates.
      * Exceptions: N/A
      * Returns:
      * - String: A formatted string representing the chomp bar, with top row showing column index, 
-     *           and the left side column showing the row index
+     *           and the left side column showing the row index.
      *   For example: "| X | 0 | 1 | 2 |
      *                 -----------------
      *                 | 0 | 3 | 3 | 3 |
@@ -78,20 +79,21 @@ public class Chomp extends AbstractStrategyGame {
      * Parameters: N/A
      */
     public String toString() {
-        //add the initial row labels for the chomp bar coordinate plane
+        // add the initial column labels for the chomp bar coordinate plane
         String currentChompBar = "| X |";
         for (int i = 0; i < COLS; i++) {
             currentChompBar += " " + i + " |";
         }
         currentChompBar += "\n";
 
+        // add the divider bar between chomp bar and column labels
         currentChompBar += "-----";
         for (int i = 0; i < COLS; i++) {
             currentChompBar += "----";
         }
         currentChompBar += "\n";
 
-        //add the column labels as well as 
+        // add the row labels as well as and rest of the chomp bar (changes dynamically with array)
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
                 if (j == 0) {
@@ -106,9 +108,12 @@ public class Chomp extends AbstractStrategyGame {
 
     /**
      * Behavior:
-     * Exceptions:
+     * - Retrieves the winner of the game.
+     * Exceptions: N/A
      * Returns:
-     * Parameters:
+     * - int: The player number of the winner (PLAYER_1 or PLAYER_2), or NO_WINNER if the
+     * game is not yet over.
+     * Parameters: N/A
      */
     public int getWinner() {
         return winner;
@@ -116,8 +121,11 @@ public class Chomp extends AbstractStrategyGame {
 
     /**
      * Behavior:
-     * Exceptions:
+     * - Determines which player's turn it is.
+     * Exceptions: N/A
      * Returns:
+     * - int: The player number of the next player (PLAYER_1 or PLAYER_2), or GAME_IS_OVER
+     * if the game has concluded.
      * Parameters: N/A
      */
     public int getNextPlayer() {
@@ -134,9 +142,14 @@ public class Chomp extends AbstractStrategyGame {
 
     /**
      * Behavior:
+     * - Prompts the current player to enter their move (row and column) and reads the
+     * input from the console.
      * Exceptions:
+     * - Throws an IllegalArgumentException if the provided Scanner is null.
      * Returns:
+     * - String: A string representing the player's chosen coordinates, formatted as "row col".
      * Parameters:
+     * - input: The Scanner object used to read user input from the console.
      */
     public String getMove(Scanner input) {
         if (input == null) {
@@ -145,7 +158,7 @@ public class Chomp extends AbstractStrategyGame {
         
         System.out.print("Chomp Coordinate? ");
 
-        // Read the two integers for rol and column
+        // Read the two integers for row and column
         int row = input.nextInt();
         int col = input.nextInt();
         
@@ -155,9 +168,17 @@ public class Chomp extends AbstractStrategyGame {
 
     /**
      * Behavior:
+     * - Processes a player's move. It chomps one layer from the selected square and all
+     * squares to its right and below that are on the same layer.
+     * - It then switches the turn to the next player and checks if the game has been won
+     * (i.e., if the (0,0) square is now empty).
      * Exceptions:
-     * Returns:
+     * - Throws an IllegalArgumentException if the input string is not in the format "row col".
+     * - Throws an IllegalArgumentException if the coordinates are outside the board's bounds.
+     * - Throws an IllegalArgumentException if the chosen square has no layers left (is 0).
+     * Returns: N/A
      * Parameters: 
+     * - input: A string containing the row and column for the move, separated by a space.
      */
     public void makeMove(String input) {
         String[] coordinates = input.split(" ");
@@ -170,10 +191,13 @@ public class Chomp extends AbstractStrategyGame {
         if (col < 0 || row < 0 || col >= COLS || row >= ROWS) {
             throw new IllegalArgumentException("Row and Col inputs must be within board bounds");
         }
+
         if (chompBar[row][col] == 0) {
             throw new IllegalArgumentException("That position is already empty, choose another");
         }
 
+        // Goes through the selected tile and all tiles to the right and down on the same layer
+        // as the selected tile and subtracts one
         int currentChompLayer = chompBar[row][col]; 
         for (int i = row; i < ROWS; i++) {
             for (int j = col; j < COLS; j++) { 
@@ -183,7 +207,9 @@ public class Chomp extends AbstractStrategyGame {
             }
         }
 
+        // change players
         isFirstTurn = !isFirstTurn;
+        // if the the previous player hit the poison square, then the current player winners
         if (chompBar[0][0] == 0) {
             winner = getNextPlayer();
         }
