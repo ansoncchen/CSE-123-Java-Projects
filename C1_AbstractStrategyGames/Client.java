@@ -3,7 +3,7 @@ import java.util.*;
 public class Client {
     public static void main(String[] args) {
         Scanner console = new Scanner(System.in);
-        AbstractStrategyGame game = /* TODO - construct your game OR test out TicTacToe */;
+        AbstractStrategyGame game = new TicTacToe1D(); /* TODO - construct your game OR test out TicTacToe */
 
         System.out.println(game.instructions());
         System.out.println();
