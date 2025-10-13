@@ -23,6 +23,8 @@ public class Chomp extends AbstractStrategyGame {
 
     /**
      * Behavior: 
+     * - Constructs a new Chomp game, initializing a 4x7 board with 3 layers on each square.
+     * - Sets the winner status to NO_WINNER and sets the starting turn to Player 1 (X).
      * Exceptions: N/A
      * Returns: N/A (constructor)
      * Parameters: N/A
@@ -41,8 +43,10 @@ public class Chomp extends AbstractStrategyGame {
 
     /**
      * Behavior:
+     * - Provides a detailed set of instructions explaining the rules and objectives of the Chomp game.
      * Exceptions: N/A
      * Returns:
+     * - String: A multi-line string containing the game instructions for the player.
      * Parameters: N/A
      */
     public String instructions() {
@@ -59,15 +63,18 @@ public class Chomp extends AbstractStrategyGame {
         return result;
     }
 
-    /**
+     /**
      * Behavior: 
+     * - Generates a string representation of the current state of the Chomp game board, 
+     * including row and column labels for coordinates.
      * Exceptions: N/A
      * Returns:
-     *  - String: Representation, with top row representing the column numbers and the 
-     *  - Ex: "| X | 0 | 1 | 2 |
-               -----------------
-               | 0 | 3 | 3 | 3 |
-               | 1 | 3 | 3 | 3 |""
+     * - String: A formatted string representing the chomp bar, with top row showing column index, 
+     *           and the left side column showing the row index
+     *   For example: "| X | 0 | 1 | 2 |
+     *                 -----------------
+     *                 | 0 | 3 | 3 | 3 |
+     *                 | 1 | 3 | 3 | 3 |"
      * Parameters: N/A
      */
     public String toString() {
