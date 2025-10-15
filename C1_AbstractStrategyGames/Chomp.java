@@ -1,7 +1,7 @@
 // Anson Chen
 // 10/12/2025
 // CSE 123
-// C1: Abstract Stategy Game
+// C1: Abstract Stategy Game - Chomp
 // TA: Ishita
 // This class represents a 3-layered Chomp Game that extends the AbstractStrategyGame class
 import java.util.*;
@@ -38,13 +38,14 @@ public class Chomp extends AbstractStrategyGame {
             }
         }
 
+        //sets the initial conditions for winners and who's turn it is
         this.winner = NO_WINNER;
         this.isFirstTurn = true;
     }
 
     /**
      * Behavior:
-     * - Provides a detailed set of instructions explaining the rules and objectives of the Chomp game.
+     * - Provides a detailed set of instructions explaining the rules of the Chomp game.
      * Exceptions: N/A
      * Returns:
      * - String: A multi-line string containing the game instructions for the player.
@@ -53,13 +54,13 @@ public class Chomp extends AbstractStrategyGame {
     public String instructions() {
         String result = "";
         result += "Welcome to Chomp, a two-player game where your goal is to force your\n";
-        result += "opponent to take the 'poison' square at coordinate (0, 0).\n";
-        result += "The board is a 'chocolate bar' with 3 layers. The numbers on the board show\n";
-        result += "how many layers are left. A '0' means the square is completely gone.\n";
+        result += "opponent to take the 'poison' square at the (0, 0) coordinate.\n";
+        result += "The board is a like 'chocolate bar' with 3 layers. The numbers on the board \n";
+        result += "show how many layers are left. A '0' means the square is completely gone.\n";
         result += "On your turn, enter the coordinates for the square you want to chomp,\n";
         result += "with the row first, then the column (e.g., '2 3').\n";
         result += "Chomping removes one layer from your chosen square and every square to the\n";
-        result += "right of and below it, but only if they are on the same layer as your pick.\n";
+        result += "right of and below it, but only if they are on the same layer as your square.\n";
         result += "The player who is forced to chomp the last layer of the (0, 0) square loses.\n";
         return result;
     }
@@ -112,7 +113,7 @@ public class Chomp extends AbstractStrategyGame {
      * Exceptions: N/A
      * Returns:
      * - int: The player number of the winner (PLAYER_1 or PLAYER_2), or NO_WINNER if the
-     * game is not yet over.
+     *        game is not yet over.
      * Parameters: N/A
      */
     public int getWinner() {
@@ -125,14 +126,16 @@ public class Chomp extends AbstractStrategyGame {
      * Exceptions: N/A
      * Returns:
      * - int: The player number of the next player (PLAYER_1 or PLAYER_2), or GAME_IS_OVER
-     * if the game has concluded.
+     *        if the game has concluded.
      * Parameters: N/A
      */
     public int getNextPlayer() {
+        //Checks if the game is over
         if (isGameOver()) {
             return GAME_IS_OVER;
         }
         
+        //Determines whos turn it is if the game isn't over
         if (isFirstTurn) {
             return PLAYER_1;
         } else {
@@ -143,7 +146,7 @@ public class Chomp extends AbstractStrategyGame {
     /**
      * Behavior:
      * - Prompts the current player to enter their move (row and column) and reads the
-     * input from the console.
+     *   input from the console.
      * Exceptions:
      * - Throws an IllegalArgumentException if the provided Scanner is null.
      * Returns:
@@ -169,9 +172,9 @@ public class Chomp extends AbstractStrategyGame {
     /**
      * Behavior:
      * - Processes a player's move. It chomps one layer from the selected square and all
-     * squares to its right and below that are on the same layer.
+     *   squares to its right and below that are on the same layer.
      * - It then switches the turn to the next player and checks if the game has been won
-     * (i.e., if the (0,0) square is now empty).
+     *   (i.e., if the (0,0) square is now empty).
      * Exceptions:
      * - Throws an IllegalArgumentException if the input string is not in the format "row col".
      * - Throws an IllegalArgumentException if the coordinates are outside the board's bounds.
@@ -181,17 +184,20 @@ public class Chomp extends AbstractStrategyGame {
      * - input: A string containing the row and column for the move, separated by a space.
      */
     public void makeMove(String input) {
+        //checks if input formatting is correct
         String[] coordinates = input.split(" ");
         if (coordinates.length != 2) {
             throw new IllegalArgumentException("Invalid coordinates format. Expected 'row col'");
         }
 
+        //checks if the coordinates are valid
         int row = Integer.parseInt(coordinates[0]);
         int col = Integer.parseInt(coordinates[1]);
         if (col < 0 || row < 0 || col >= COLS || row >= ROWS) {
             throw new IllegalArgumentException("Row and Col inputs must be within board bounds");
         }
 
+        //checks if you can even chomp that spot
         if (chompBar[row][col] == 0) {
             throw new IllegalArgumentException("That position is already empty, choose another");
         }
