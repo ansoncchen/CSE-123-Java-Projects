@@ -42,6 +42,7 @@ public class MultiCipher extends Cipher {
      * - input: The String that will be encrypted.
      */
     public String encrypt(String input) {
+        //checks if valid input
         if (input == null) {
             throw new IllegalArgumentException("Input string cannot be null.");
         }
@@ -65,6 +66,7 @@ public class MultiCipher extends Cipher {
      * - input: The String that will be decrypted.
      */
     public String decrypt(String input) {
+        //checks if valid input
         if (input == null) {
             throw new IllegalArgumentException("Input string cannot be null.");
         }

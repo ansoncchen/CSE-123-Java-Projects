@@ -6,7 +6,6 @@
 // This class provides implements substitution cipher, where each character
 // in the plaintext is replaced with a corresponding character from an encoding key.
 // It can serve as a base class for more specific types of substitution ciphers.
-import java.util.*;
 
 public class Substitution extends Cipher {
     private char[] encode; // Stores encryption mapping
@@ -27,13 +26,15 @@ public class Substitution extends Cipher {
     /**
      * Behavior:
      * - Constructs a new Substitution cipher using the provided string as the
-     *   encoding key.
+     *   cipher.
      * Exceptions:
-     * - Throws an IllegalArgumentException if the provided cipher string is
-     *   invalid based on setEncoding.
+     * - Throws an IllegalArgumentException if the cipher string is null,
+     * - Throws an IllegalArgumentException if the cipher string is not equal to TOTAL_CHARS
+     * - Throws an IllegalArgumentException if the cipher string contains duplicate or 
+     *   out-of-range characters.
      * Returns: N/A (constructor)
      * Parameters:
-     * - cipher: The String representing the encoding key.
+     * - cipher: The String representing the cipher.
      */
     public Substitution(String cipher) {
         setEncoding(cipher);
@@ -46,27 +47,29 @@ public class Substitution extends Cipher {
      *   no duplicate or invalid characters.
      * Exceptions:
      * - Throws an IllegalArgumentException if the cipher string is null,
-     * - Throwa an IllegalArgumentException if the cipher string is not equal to TOTAL_CHARS
+     * - Throws an IllegalArgumentException if the cipher string is not equal to TOTAL_CHARS
      * - Throws an IllegalArgumentException if the cipher string contains duplicate or 
      *   out-of-range characters.
      * Returns: N/A
      * Parameters:
-     * - cipher: The String representing the substitution alphabet.
+     * - cipher: The String representing the cipher.
      */
     public void setEncoding(String cipher) {
         if (cipher == null || cipher.length() != TOTAL_CHARS) {
             throw new IllegalArgumentException("Cipher key is invalid.");
         }
 
+        // creates a the encoding and decoding arrays based on the cipher
         this.encode = new char[cipher.length()];
         this.decode = new char[cipher.length()];
-        Set<Character> duplicates = new HashSet<>(); // HashSet for O(1) lookup time
 
         for (int i = 0; i < cipher.length(); i++) {
             char currentChar = cipher.charAt(i);
 
-            // Check for invalid or duplicate characters 
-            if (!isCharInRange(currentChar) || duplicates.contains(currentChar)) {
+            // Check for invalid or duplicate characters
+            // indexOf returns the first index of the character, so if it's not equal to i,
+            // it means the character has appeared before
+            if (!isCharInRange(currentChar) || cipher.indexOf(currentChar) != i) {
                 throw new IllegalArgumentException("Invalid or duplicate char in key.");
             }
 
@@ -77,9 +80,6 @@ public class Substitution extends Cipher {
             //Sets decode key so that accessing the index of the encoding character 
             //will pull up the original characters
             decode[(int)currentChar - MIN_CHAR] = (char) (i + MIN_CHAR);
-            
-            //Adds to the duplicates set to make sure it doesn't reappear in the cipher
-            duplicates.add(currentChar);
         }
     } 
 
@@ -96,6 +96,7 @@ public class Substitution extends Cipher {
      * - input: The String that will be encrypted.
      */
     public String encrypt(String input) {
+        //checks if necessary variables are not null 
         if (input == null) {
             throw new IllegalArgumentException("Input string cannot be null.");
         }
@@ -104,10 +105,12 @@ public class Substitution extends Cipher {
         }
 
         char[] result = new char[input.length()];
+        //encodes each of the characters in the input string
         for (int i = 0; i < result.length; i++) {
             // Finds the original character from the encode array
             result[i] = encode[input.charAt(i) - MIN_CHAR];
         }
+        //converts char array to string and returns
         return new String(result);
     }
 
@@ -117,13 +120,14 @@ public class Substitution extends Cipher {
      *   corresponding character from the decoding key.
      * Exceptions:
      * - Throws an IllegalArgumentException if the input string is null.
-     * - Throws an IllegalStateException if the encoding key has not been set.
+     * - Throws an IllegalStateException if the decoding key has not been set.
      * Returns:
      * - String: The decrypted version of the input string.
      * Parameters:
      * - input: The String that will be decrypted.
      */
     public String decrypt(String input) {
+        //checks if necessary variables are not null 
         if (input == null) {
             throw new IllegalArgumentException("Input string cannot be null.");
         }
@@ -132,10 +136,12 @@ public class Substitution extends Cipher {
         }
 
         char[] result = new char[input.length()];
+        //decodes each of the characters in the input string
         for (int i = 0; i < result.length; i++) {
             // Finds the original character from the decode array
             result[i] = decode[input.charAt(i) - MIN_CHAR];
         }
+        //converts char array to string and returns
         return new String(result);
     }
 }

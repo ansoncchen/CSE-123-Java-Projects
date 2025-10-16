@@ -6,7 +6,6 @@
 // This class implements a Caesar Key cipher, a substitution cipher that
 // uses a keyword to an encoding key. The keyword form the beginning of the key, 
 // followed by the remaining characters in alphabetical order.
-import java.util.*;
 
 public class CaesarKey extends Substitution {
     /**
@@ -28,17 +27,17 @@ public class CaesarKey extends Substitution {
             throw new IllegalArgumentException("Key cannot be null.");
         }
         
-        Set<Character> checkChars = new HashSet<>(); // HashSet for O(1) lookup time
-        char[] encodeKey = new char [TOTAL_CHARS];
+        char[] encodeKey = new char[TOTAL_CHARS];
 
         // Process the initial key and put into encoding key
         for (int i = 0; i < key.length(); i++) {
             char currentChar = key.charAt(i);
             // Validate that the character is within the allowed range and not a duplicate
-            if (!isCharInRange(currentChar) || checkChars.contains(currentChar)) {
+            // indexOf returns the first index of the character, so if it's not equal to i,
+            // it means the character has appeared before
+            if (!isCharInRange(currentChar) || key.indexOf(currentChar) != i) {
                 throw new IllegalArgumentException("Invalid or duplicate character in key.");
-            } 
-            checkChars.add(currentChar);
+            }
             encodeKey[i] = currentChar;
         }
 
@@ -49,11 +48,11 @@ public class CaesarKey extends Substitution {
         // Loop until encodeKey length matches the TOTAL_CHARS, indicating that the key is usable
         while (fillIndex < encodeKey.length) {
             // Check if the potential character was already used put into the key
-            if (!checkChars.contains(potentialChar)) {
+            if (key.indexOf(potentialChar) == -1) { // -1 means the character isn't in the key
                 encodeKey[fillIndex] = potentialChar;
-                fillIndex++; // Move to the next fill index only when we add a character
+                fillIndex++;
             }
-            potentialChar++; // Always move to the next character
+            potentialChar++; // Always move to the next character even if the current char was used
         }
 
         // Converts char array to string and encodes the new key in the substitution superclass
