@@ -24,7 +24,7 @@ public class Chomp extends AbstractStrategyGame {
     /**
      * Behavior: 
      * - Constructs a new Chomp game, initializing a 4x7 board with 3 layers on each square.
-     * - Sets the winner status to NO_WINNER and sets the starting turn to Player 1.
+     * - Sets it so there's no winner currently and sets the starting turn to Player 1.
      * Exceptions: N/A
      * Returns: N/A (constructor)
      * Parameters: N/A
@@ -112,8 +112,8 @@ public class Chomp extends AbstractStrategyGame {
      * - Retrieves the winner of the game.
      * Exceptions: N/A
      * Returns:
-     * - int: The player number of the winner (PLAYER_1 or PLAYER_2), or NO_WINNER if the
-     *        game is not yet over.
+     * - int: The player number of the winner (Player 1 or Player 2), or set it so
+     *        the game is not yet over, thus continuing the game.
      * Parameters: N/A
      */
     public int getWinner() {
@@ -125,8 +125,8 @@ public class Chomp extends AbstractStrategyGame {
      * - Determines which player's turn it is.
      * Exceptions: N/A
      * Returns:
-     * - int: The player number of the next player (PLAYER_1 or PLAYER_2), or GAME_IS_OVER
-     *        if the game has concluded.
+     * - int: The player number of the next player (Player 1 or Player 2), or sets it so
+     *        the game has concluded and thus there are no more turns
      * Parameters: N/A
      */
     public int getNextPlayer() {
@@ -176,6 +176,7 @@ public class Chomp extends AbstractStrategyGame {
      * - It then switches the turn to the next player and checks if the game has been won
      *   (i.e., if the (0,0) square is now empty).
      * Exceptions:
+     * - Throws an IllegalArgumentException if the input string is null.
      * - Throws an IllegalArgumentException if the input string is not in the format "row col".
      * - Throws an IllegalArgumentException if the coordinates are outside the board's bounds.
      * - Throws an IllegalArgumentException if the chosen square has no layers left (is 0).
@@ -184,6 +185,11 @@ public class Chomp extends AbstractStrategyGame {
      * - input: A string containing the row and column for the move, separated by a space.
      */
     public void makeMove(String input) {
+        //checks if input string is null
+        if (input == null) {
+            throw new IllegalArgumentException("Coordinate String cannot be null.");
+        }
+
         //checks if input formatting is correct
         String[] coordinates = input.split(" ");
         if (coordinates.length != 2) {
